@@ -8,69 +8,65 @@ public class SudokuSolver {
 	protected final int size;
 	protected final int root;
 	protected ArrayList<Integer> allowed = new ArrayList<Integer>();
+	public int num_solutions;
 
 	public SudokuSolver(int size) {
 		this.board = new int[size][size];
 		this.size = size;
 		this.root = (int) Math.floor(Math.sqrt(size));
-		for(int i = 1; i <= size; i++) {
+		this.num_solutions = 0;
+		for (int i = 1; i <= size; i++) {
 			allowed.add(i);
 		}
 	}
-	
+
 	public SudokuSolver(int[][] board) {
 		this.board = board;
 		this.size = board.length;
 		this.root = (int) Math.floor(Math.sqrt(size));
-		for(int i = 1; i <= size; i++) {
+		for (int i = 1; i <= size; i++) {
 			allowed.add(i);
 		}
 	}
 
 	public int[][] solve() {
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				board[i][j] = 0;
-			}
-		}
-
+		num_solutions = 0;
 		solveSudoku();
 		return board;
 	}
-	public boolean solveSudoku()
-	{
-	    for(int row=0;row<size;row++)
-	    {
-	        for(int col=0;col<size;col++)
-	        {
-	            if(board[row][col]== 0)
-	            {
-	                for(int number : allowed)
-	                {
-	                    if(isSafe(row, col, number))
-	                    {
-	                        board[row][col] = number;
-	                        if(solveSudoku())
-	                        {
-	                            return true;
-	                        }
-	                        else
-	                        {
-	                            board[row][col] = 0;
-	                        }
-	                    }
-	                }
-	                return false;
-	            }
-	        }
-	    }
-	    return true;
+
+	public int[][] solveSudoku() {
+		int last = 1;
+		int j = 0;
+		int i = 0;
+		
+		while(true) {
+			if(board[i][j] == 0) {
+				while(last <= board.length) {
+					if(isSafe(i,j,last)) {
+						board[i][j] = last;
+						solveSudoku();
+					}
+					last++;
+				}
+				board[i][j] = 0;
+				return board;
+			} else if(i < board.length-1) {
+				i++;
+			} else if( i == board.length-1 && j < board.length-1) {
+				i = 0;
+				j++;
+			} else {
+				num_solutions++;
+				return board;
+			}
+		}
 	}
-	
+
 	protected boolean isSafe(int row, int col, int n) {
 		return (safeRow(row, n) && safeCol(col, n) && safeBox(row, col, n));
 	}
-	
+
 	private boolean safeRow(int row, int n) {
 		for (int i = 0; i < this.size; i++) {
 			if (board[row][i] == n) {
@@ -101,11 +97,11 @@ public class SudokuSolver {
 		}
 		return true;
 	}
-	
+
 	private String encodeBoard() {
 		StringBuilder out = new StringBuilder();
-		for(int i = 0; i < size; i++) {
-			for(int j = 0; j < size; j++) {
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
 				out.append(board[i][j] + ";");
 			}
 		}
@@ -118,7 +114,7 @@ public class SudokuSolver {
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				out.append(String.valueOf(board[i][j]));
-				out.append(';');
+				// out.append(';');
 			}
 		}
 		return out.toString();
@@ -129,5 +125,6 @@ public class SudokuSolver {
 		s1.solve();
 		System.out.println(s1.toString());
 		System.out.println(s1.encodeBoard());
+		System.out.println(s1.num_solutions);
 	}
 }
