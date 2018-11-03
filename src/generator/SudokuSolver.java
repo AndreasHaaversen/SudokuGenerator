@@ -29,12 +29,12 @@ public class SudokuSolver {
 		}
 	}
 
-	public int[][] solve() {
+	public int[][] solve(int[][] board) {
 		num_solutions = 0;
-		return solveSudoku();
+		return solveSudoku(board);
 	}
 
-	public int[][] solveSudoku() {
+	public int[][] solveSudoku(int[][] board) {
 		int last = 1;
 		int j = 0;
 		int i = 0;
@@ -44,7 +44,7 @@ public class SudokuSolver {
 				while(last <= board.length) {
 					if(isSafe(i,j,last)) {
 						board[i][j] = last;
-						solveSudoku();
+						solveSudoku(board);
 					}
 					last++;
 				}
@@ -114,7 +114,7 @@ public class SudokuSolver {
 			for (int j = 0; j < size; j++) {
 				int val = board[i][j];
 				if (val == 0) {
-					out.append(".");
+					out.append("0");
 				} else {
 					out.append(String.valueOf(val));
 				}
@@ -126,7 +126,6 @@ public class SudokuSolver {
 
 	public static void main(String[] args) {
 		SudokuSolver s1 = new SudokuSolver(9);
-		s1.solve();
 		System.out.println(s1.toString());
 		System.out.println(s1.encodeBoard());
 		System.out.println(s1.num_solutions);
