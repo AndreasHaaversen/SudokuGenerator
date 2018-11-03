@@ -30,7 +30,7 @@ public class SudokuGenerator extends SudokuSolver {
 			}
 		}
 		generateSudoku();
-		makeHoles(difficulty*super.board.length);
+		makeHoles(difficulty);
 		return board;
 	}
 
@@ -40,9 +40,10 @@ public class SudokuGenerator extends SudokuSolver {
 		while (removed < difficulty) {
 			int x = rand.nextInt(size);
 			int y = rand.nextInt(size);
-			if (board[x][y] != 0) {
+			if (board[x][y] != 0 && board[y][x] != 0) {
 				board[x][y] = 0;
-				removed++;
+				board[y][x] = 0;
+				removed += 2;
 			}
 		}
 		return board;
@@ -73,16 +74,16 @@ public class SudokuGenerator extends SudokuSolver {
 	
 
 	public static void main(String[] args) {
-		SudokuGenerator g1 = new SudokuGenerator(2);
-		g1.make_unique_board(1);
+		SudokuGenerator g1 = new SudokuGenerator(9);
+		g1.make_unique_board(55);
 		for (int i = 0; i < g1.board.length; i++) {
 			for (int j = 0; j < g1.board.length; j++) {
-				System.out.print(g1.board[i][j]);
+				System.out.print(g1.board[i][j]+ "; ");
 			}
+			System.out.println();
 		}
 		System.out.println();
 		SudokuSolver s1 = new SudokuSolver(g1.board);
-		System.out.println(s1);
 		s1.solve();
 		System.out.println(s1);
 		System.out.println(s1.num_solutions);

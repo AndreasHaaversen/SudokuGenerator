@@ -31,8 +31,7 @@ public class SudokuSolver {
 
 	public int[][] solve() {
 		num_solutions = 0;
-		solveSudoku();
-		return board;
+		return solveSudoku();
 	}
 
 	public int[][] solveSudoku() {
@@ -113,7 +112,12 @@ public class SudokuSolver {
 		StringBuilder out = new StringBuilder();
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				out.append(String.valueOf(board[i][j]));
+				int val = board[i][j];
+				if (val == 0) {
+					out.append(".");
+				} else {
+					out.append(String.valueOf(val));
+				}
 				// out.append(';');
 			}
 		}
