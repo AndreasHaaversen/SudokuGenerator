@@ -123,11 +123,4 @@ public class SudokuSolver {
 		}
 		return out.toString();
 	}
-
-	public static void main(String[] args) {
-		SudokuSolver s1 = new SudokuSolver(9);
-		System.out.println(s1.toString());
-		System.out.println(s1.encodeBoard());
-		System.out.println(s1.num_solutions);
-	}
 }
