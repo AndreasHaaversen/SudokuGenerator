@@ -1,6 +1,8 @@
 package generator;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class SudokuGenerator extends SudokuSolver {
@@ -9,10 +11,13 @@ public class SudokuGenerator extends SudokuSolver {
 	private static final int MEDIUM = 1;
 	private static final int HARD = 2;
 	private static final int DEFAULT_PATIENCE = 50;
+	
+	private List<Tuple<Integer, Integer>> positions = new ArrayList<Tuple<Integer, Integer>>();
 
 	public SudokuGenerator(int size) {
 		super(size);
 	}
+
 
 	public int[][] generate(int difficulty, int patience) {
 		boolean satisfied = false;
@@ -25,10 +30,19 @@ public class SudokuGenerator extends SudokuSolver {
 			}
 
 			generateSudoku();
+			getPositions(size);
 			satisfied = makeHoles(holes, patience);
 		}
 
 		return board;
+	}
+	
+	private void getPositions(int size) {
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				positions.add(new Tuple<Integer, Integer>(i, j));
+			}
+		}
 	}
 
 	private boolean makeHoles(int difficulty, int patience) {
@@ -40,15 +54,17 @@ public class SudokuGenerator extends SudokuSolver {
 			if (lastRemoved == removed) {
 				tries++;
 			}
-			if (tries > patience) {
+			if (tries > patience || positions.isEmpty()) {
 				return false;
 			}
 
 			lastRemoved = removed;
-			int x = rand.nextInt(size);
-			int y = rand.nextInt(size);
+			Tuple<Integer, Integer> candidate = positions.remove(rand.nextInt(positions.size()));
+			int x = candidate.x;
+			int y = candidate.y;
 			if (x != y && board[x][y] != 0 && board[y][x] != 0) {
 				if (removeAndTestPair(x, y, y, x)) {
+					positions.removeIf(p -> p.x == y && p.y == x);
 					removed += 2;
 				}
 			} else if (board[x][y] != 0) {
@@ -141,7 +157,7 @@ public class SudokuGenerator extends SudokuSolver {
 			switch(difficulty) {
 			case(EASY): out = 88; break;
 			case(MEDIUM): out = 108; break;
-			case(HARD): out = 128; break;
+			case(HARD): out = 130; break;
 			default: out = 0; break;
 			}
 		}
@@ -149,8 +165,8 @@ public class SudokuGenerator extends SudokuSolver {
 	}
 
 	public static void main(String[] args) {
-		SudokuGenerator g1 = new SudokuGenerator(16);
-		g1.generate(HARD, DEFAULT_PATIENCE);
+		SudokuGenerator g1 = new SudokuGenerator(9);
+		g1.generate(MEDIUM, DEFAULT_PATIENCE);
 		for (int i = 0; i < g1.board.length; i++) {
 			for (int j = 0; j < g1.board.length; j++) {
 				System.out.print(g1.board[i][j] + "; ");
